@@ -1,0 +1,26 @@
+<idea-plugin>
+    <id>com.fatefulsoftware.AngularTranslateHelper</id>
+    <name>Angular Translate Helper</name>
+    <vendor email="jason@fatefulsoftware.com" url="http://www.fatefulsoftware.com">Fateful Software</vendor>
+
+    <description><![CDATA[
+        Moves text to localization file and replaces with id filtered by angular-translate
+    ]]></description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="LocalizeAction" class="LocalizeAction" text="Localize Action"
+                description="Moves text to localization file and replaces with id filtered by angular-translate">
+            <add-to-group group-id="RefactoringMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift meta R"/>
+        </action>
+    </actions>
+</idea-plugin>

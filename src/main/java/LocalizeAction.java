@@ -26,6 +26,8 @@ import java.util.*;
 import static com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser.NOTIFICATION_GROUP;
 
 public class LocalizeAction extends AnAction {
+    VirtualFile lastFile;
+
     @Override
     public void update(AnActionEvent e) {
         final Editor editor = e.getData(CommonDataKeys.EDITOR);
@@ -38,26 +40,36 @@ public class LocalizeAction extends AnAction {
         final Project project = e.getProject();
         final Editor editor = e.getData(CommonDataKeys.EDITOR);
 
-        promptForFile(project, new Consumer<VirtualFile>() {
-            @Override
-            public void consume(VirtualFile virtualFile) {
-                if (virtualFile != null && !virtualFile.isDirectory()) {
-                    final String text = getSelectedText(editor);
-                    String translationId = getTranslationId(text);
+        if (lastFile == null) {
+            promptForFile(project, new Consumer<VirtualFile>() {
+                @Override
+                public void consume(VirtualFile virtualFile) {
+                    if (virtualFile != null && !virtualFile.isDirectory()) {
+                        lastFile = virtualFile;
 
-                    try {
-                        translationId = addTranslationEntry(project, virtualFile, translationId, text);
-
-                        final String newText = "{{ '" + translationId + "' | translate }}";
-                        replaceText(editor, project, newText);
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-
-                        showNotification(project, exception.getMessage());
+                        translate(project, editor, virtualFile);
                     }
                 }
-            }
-        });
+            });
+        } else {
+            translate(project, editor, lastFile);
+        }
+    }
+
+    static void translate(Project project, Editor editor, VirtualFile virtualFile) {
+        final String text = getSelectedText(editor);
+        String translationId = getTranslationId(text);
+
+        try {
+            translationId = addTranslationEntry(project, virtualFile, translationId, text);
+
+            final String newText = "{{ '" + translationId + "' | translate }}";
+            replaceText(editor, project, newText);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+
+            showNotification(project, exception.getMessage());
+        }
     }
 
     static void showNotification(Project project, String text) {
@@ -154,7 +166,7 @@ public class LocalizeAction extends AnAction {
     }
 
     static String getTranslationId(String text) {
-        return text.toUpperCase().replaceAll("[^A-Za-z]]", "_");
+        return text.toUpperCase().replaceAll("[^A-Za-z]", "_").replaceAll("__", "_").replaceAll("^_+", "").replaceAll("_+$", "");
     }
 
     static void formatFile(Project project, VirtualFile file) throws Exception {

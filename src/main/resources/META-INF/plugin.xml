@@ -20,7 +20,12 @@
         <action id="LocalizeAction" class="LocalizeAction" text="Localize Action"
                 description="Moves text to localization file and replaces with id filtered by angular-translate">
             <add-to-group group-id="RefactoringMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift meta R"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift meta L"/>
+        </action>
+        <action id="TransformIntoTranslationIdAction" class="TransformIntoTranslationIdAction" text="Transform Into Translation ID Action"
+                description="Transforms text into a translation ID">
+            <add-to-group group-id="RefactoringMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift meta T"/>
         </action>
     </actions>
 </idea-plugin>
